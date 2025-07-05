@@ -1,6 +1,6 @@
-# PostgreSQL Hotel Reservation System
+# Hotel Reservation System
 
-This repository contains the PostgreSQL database schema, Python backend code, and Flask frontend application for a hotel reservation system. The system allows users to register, make reservations for different types of rooms, and manage reservation details through a web interface.
+This Database Management System project allows users to register themsleves, make reservations for different types of rooms, and manage reservation details through a web interface. This repository contains the PostgreSQL database schema, Python backend code, and the Flask frontend application. 
 
 ## Table of Contents
 
