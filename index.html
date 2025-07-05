@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <title>PC HOTEL</title>
+    <style>
+        /* Style for the body */
+        body {
+            background-image: url("https://img.freepik.com/free-photo/type-entertainment-complex-popular-resort-with-pools-water-parks-turkey-with-more-than-5-million-visitors-year-amara-dolce-vita-luxury-hotel-resort-tekirova-kemer_146671-18728.jpg?t=st=1715444681~exp=1715448281~hmac=660404744b0bb5210d0752fc39db57cfc397b1ee3b8d62d550b2f3f6e3505f32&w=1380"); /* Set the image as background */
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background image */
+            background-repeat: no-repeat; /* Do not repeat the background image */
+            font-family: Arial, sans-serif; /* Set font family */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            display: flex; /* Use flexbox for layout */
+        }
+
+        /* Style for the left display window */
+        .display-window {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+            padding: 20px; /* Add some padding */
+            border-radius: 10px; /* Add border radius */
+            margin: 50px; /* Add margin */
+            width: 250px; /* Set width */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add box shadow */
+        }
+
+        /* Style for the form container */
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+            padding: 20px; /* Add some padding */
+            border-radius: 10px; /* Add border radius */
+            margin: 50px auto; /* Center the form horizontally */
+            max-width: 400px; /* Set maximum width */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add box shadow */
+            position: relative; /* Needed for absolute positioning */
+        }
+
+        /* Style for input fields */
+        input[type="email"], input[type="text"], input[type="password"], input[type="date"], input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        /* Style for submit button */
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff; /* Blue color */
+            color: #fff; /* White text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        /* Style for headings */
+        h1, h2 {
+            text-align: center; /* Center align headings */
+            color: #333; /* Dark text color */
+        }
+
+        /* Style for success message */
+        .success-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+            color: #fff; /* White text color */
+            padding: 20px;
+            border-radius: 10px;
+            display: none; /* Hide by default */
+        }
+        
+    
+    </style>
+</head>
+<body>
+    <div class="display-window">
+        <h2>Room Details</h2>
+        <div>
+            <h3>Deluxe Room</h3>
+            <p>Price: $100 per night</p>
+            <p>Maximum occupancy: 2 people</p>
+        </div>
+        <hr>
+        <div>
+            <h3>Premium Room</h3>
+            <p>Price: $500 per night</p>
+            <p>Maximum occupancy: 4 people</p>
+        </div>
+        <hr>
+        <div>
+            <h3>Suite Room</h3>
+            <p>Price: $1000 per night</p>
+            <p>Maximum occupancy: 6 people</p>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <h1>PC HOTEL</h1>
+        <h2>Register</h2>
+        <form action="/add_user" method="post" onsubmit="return showSuccessMessage('user-success-message')">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+            
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            
+            <input type="submit" value="Add User">
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Add Reservation</h2>
+        <form action="/add_reservation" method="post" onsubmit="return showSuccessMessage('reservation-success-message')">
+            <label for="reservationID">Reservation ID:</label>
+            <input type="number" id="reservationID" name="reservationID" required><br><br>
+            
+            <label for="reservedBy">Reserved By:</label>
+            <input type="email" id="reservedBy" name="reservedBy" required><br><br>
+            
+            <label for="roomType">Room Type:</label>
+            <select id="roomType" name="roomType" required>
+                <option value="delux">Delux</option>
+                <option value="premium">Premium</option>
+                <option value="suite">Suite</option>
+            </select><br><br>
+            
+            <label for="reservationDate">Reservation Date:</label>
+            <input type="date" id="reservationDate" name="reservationDate" required><br><br>
+
+            <label for="checkoutDate">Checkout Date:</label>
+            <input type="date" id="checkoutDate" name="checkoutDate" required><br><br>
+            
+            <input type="submit" value="Add Reservation">
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>View Reservation Details</h2>
+        <form action="/reservation_details" method="post">
+            <label for="reservation_id">Reservation ID:</label>
+            <input type="number" id="reservation_id" name="reservation_id" required><br><br>
+            <input type="submit" value="View Details">
+        </form>
+    </div>
+
+    <!-- Success message for user addition -->
+    <div class="success-message" id="user-success-message">
+        User added successfully.
+    </div>
+
+    <!-- Success message for reservation -->
+    <div class="success-message" id="reservation-success-message">
+        Reservation successful.
+    </div>
+
+    <script>
+        // Function to show success message
+        function showSuccessMessage(messageId) {
+            document.getElementById(messageId).style.display = 'block';
+            setTimeout(function(){
+                document.getElementById(messageId).style.display = 'none';
+            }, 5000); // Hide after 5 seconds
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+</html>
