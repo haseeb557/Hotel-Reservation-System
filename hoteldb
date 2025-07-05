@@ -1,0 +1,103 @@
+-- Create a table to store user information
+CREATE TABLE User1 (
+    email VARCHAR(255) PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    lastLogin TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Record the last login time
+);
+
+-- Create an index on the email column of the User1 table for faster retrieval
+CREATE INDEX user_email_idx ON User1 (email);
+
+-- Insert a sample user into the User1 table
+INSERT INTO User1 (email, name, password) VALUES ('testing@gmail.com', 'haseeb', 'hello123');
+
+-- Create a table to store reservations
+CREATE TABLE reservation (
+    reservationID BIGINT PRIMARY KEY,
+    reservedBy VARCHAR(30), -- Email of the user who made the reservation
+    roomType VARCHAR(20),
+    reservationDate DATE,
+    checkoutDate DATE,
+    FOREIGN KEY (reservedBy) REFERENCES User1 (email) -- Ensure the reservedBy column references the email column in the User1 table
+);
+
+-- Create indexes for faster retrieval on the reservedBy and roomType columns of the reservation table
+CREATE INDEX reservation_reservedBy_idx ON reservation (reservedBy);
+CREATE INDEX reservation_roomType_idx ON reservation (roomType);
+
+-- Create separate tables for different types of rooms (delux, premium, suite)
+CREATE TABLE delux (
+    reservationID BIGINT PRIMARY KEY,
+    price BIGINT,
+    isAvailable BOOLEAN,
+    maxNoOfPeople INT
+);
+
+CREATE TABLE premium (
+    reservationID BIGINT PRIMARY KEY,
+    price BIGINT,
+    isAvailable BOOLEAN,
+    maxNoOfPeople INT
+);
+
+CREATE TABLE suite (
+    reservationID BIGINT PRIMARY KEY,
+    price BIGINT,
+    isAvailable BOOLEAN,
+    maxNoOfPeople INT
+);
+
+-- Create a function to automatically insert reservation data into corresponding room tables based on roomType
+CREATE OR REPLACE FUNCTION InsertIntoRoomTables()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.roomType = 'delux') THEN
+        INSERT INTO delux (reservationID, price, isAvailable, maxNoOfPeople)
+        VALUES (NEW.reservationID, 100, true, 2);
+    ELSIF (NEW.roomType = 'premium') THEN
+        INSERT INTO premium (reservationID, price, isAvailable, maxNoOfPeople)
+        VALUES (NEW.reservationID, 500, true, 4);
+    ELSE
+        INSERT INTO suite (reservationID, price, isAvailable, maxNoOfPeople)
+        VALUES (NEW.reservationID, 1000, true, 6);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to automatically call the InsertIntoRoomTables function after an insert into the reservation table
+CREATE TRIGGER insert_into_room_tables_trigger
+AFTER INSERT ON reservation
+FOR EACH ROW
+EXECUTE FUNCTION InsertIntoRoomTables();
+
+-- Create a stored procedure to get reservations for a specific user
+CREATE OR REPLACE PROCEDURE GetUserReservationsCursor(
+    IN currentUserEmail VARCHAR(30) -- Input parameter: email of the user
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    user_reservation_cursor CURSOR FOR
+        -- Query to retrieve reservations for the specified user
+        SELECT u.email, u.name, r.reservationID, r.roomType, r.reservationDate, r.checkoutDate
+        FROM "User" u
+        INNER JOIN reservation r ON u.email = r.reservedBy
+        WHERE u.email = currentUserEmail;
+    row_record RECORD; -- Record variable to hold each row fetched by the cursor
+BEGIN
+    -- Open the cursor
+    OPEN user_reservation_cursor;
+
+    -- Fetch rows from the cursor and return each row
+    FOR row_record IN user_reservation_cursor LOOP
+        -- Output each row to the result set
+        -- This is equivalent to RETURN NEXT in a set-returning function
+        SELECT row_record.email, row_record.name, row_record.reservationID, row_record.roomType, row_record.reservationDate, row_record.checkoutDate;
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE user_reservation_cursor;
+END;
+$$;
